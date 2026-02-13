@@ -94,4 +94,25 @@ class HomeRepositoryImpl implements HomeRepository {
       return Error(ServerFailure('Failed to delete user: $e'));
     }
   }
+
+  @override
+  Future<Result<bool, Failure>> addUserToDb(UserEntity user) async {
+    try {
+      final dbHelper = DatabaseHelper();
+      await dbHelper.insertUser(user);
+      return Success(true);
+    } catch (e) {
+      return Error(ServerFailure('Failed to add user: $e'));
+    }
+  }
+  @override
+  Future<Result<bool, Failure>> updateUserInDb(UserEntity user) async {
+    try {
+      final dbHelper = DatabaseHelper();
+      await dbHelper.updateUser(user);
+      return Success(true);
+    } catch (e) {
+      return Error(ServerFailure('Failed to update user: $e'));
+    }
+  }
 }

@@ -73,4 +73,23 @@ class DatabaseHelper {
     final db = await database;
     await db.delete('UserTables', where: 'user_id = ?', whereArgs: [userId]);
   }
+
+  Future<void> insertUser(UserEntity user) async {
+    final db = await database;
+    await db.insert(
+      'UserTables',
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+  Future<void> updateUser(UserEntity user) async {
+    final db = await database;
+    await db.update(
+      'UserTables',
+      user.toMap(),
+      where: 'user_id = ?',
+      whereArgs: [user.userId],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 }

@@ -1,4 +1,3 @@
-// bloc/auditor_auth_state.dart
 
 import 'package:flutter_application_1/features/Demo/domain/entities/user_entity.dart';
 
@@ -41,3 +40,28 @@ class HomeDeleteUserFailure extends FetchdetailState {
   final String error;
   HomeDeleteUserFailure(this.error);
 }
+
+class HomeAddUserLoading extends FetchdetailState {}
+
+class HomeAddUserSuccess extends FetchdetailState {
+  final String message;
+  HomeAddUserSuccess(this.message);
+}
+
+class HomeAddUserFailure extends FetchdetailState {
+  final String error;
+  HomeAddUserFailure(this.error);
+}
+
+class HomeUpdateUserLoading extends FetchdetailState {}
+
+class HomeUpdateUserSuccess extends FetchdetailState {
+  final String message;
+  HomeUpdateUserSuccess(this.message);
+}
+
+class HomeUpdateUserFailure extends FetchdetailState {
+  final String error;
+  HomeUpdateUserFailure(this.error);
+}
+

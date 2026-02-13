@@ -36,6 +36,36 @@ class HomeScreen extends StatelessWidget {
             );
 
             context.read<HomeBloc>().add(HomeDbFetchEvent());
+          } else if (state is HomeAddUserFailure) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.error)));
+          } else if (state is HomeAddUserSuccess) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+            Navigator.of(context).pop(); // Close dialog if open
+            context.read<HomeBloc>().add(HomeDbFetchEvent());
+          } else if (state is HomeUpdateUserFailure) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.error)));
+          } else if (state is HomeUpdateUserSuccess) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+            Navigator.of(context).pop(); // Close dialog if open
+            context.read<HomeBloc>().add(HomeDbFetchEvent());
+          } else if (state is HomeUpdateUserFailure) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.error)));
+          } else if (state is HomeUpdateUserSuccess) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
+            Navigator.of(context).pop(); // Close dialog if open
+            context.read<HomeBloc>().add(HomeDbFetchEvent());
           }
         },
         builder: (context, state) {
@@ -73,7 +103,8 @@ class HomeScreen extends StatelessWidget {
                 // Loading indicator for any fetch
                 if (state is HomefetchLoading ||
                     state is HomeDbFetchLoading ||
-                    state is HomeDeleteUserLoading)
+                    state is HomeDeleteUserLoading ||
+                    state is HomeAddUserLoading)
                   const Center(child: CircularProgressIndicator()),
 
                 // Show DB users list
@@ -101,13 +132,24 @@ class HomeScreen extends StatelessWidget {
                               ],
                             ),
                             isThreeLine: true,
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                context.read<HomeBloc>().add(
-                                  HomeDeleteUserEvent(user.userId),
-                                );
-                              },
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit, color: Colors.blue),
+                                  onPressed: () {
+                                    _showEditUserDialog(context, user);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () {
+                                    context.read<HomeBloc>().add(
+                                      HomeDeleteUserEvent(user.userId),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         );
@@ -130,6 +172,154 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddUserDialog(context),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showAddUserDialog(BuildContext context) {
+    final nameController = TextEditingController();
+    final emailController = TextEditingController();
+    final phoneController = TextEditingController();
+    final companyController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Add User'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                ),
+                TextField(
+                  controller: phoneController,
+                  decoration: const InputDecoration(labelText: 'Phone'),
+                ),
+                TextField(
+                  controller: companyController,
+                  decoration: const InputDecoration(labelText: 'Company'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final user = UserEntity(
+                  userId: DateTime.now().millisecondsSinceEpoch,
+                  name: nameController.text,
+                  username: nameController.text.toLowerCase().replaceAll(' ', ''),
+                  email: emailController.text,
+                  phone: phoneController.text,
+                  website: '',
+                  street: '',
+                  suite: '',
+                  city: '',
+                  zipcode: '',
+                  lat: '',
+                  lng: '',
+                  companyName: companyController.text,
+                  companyCatchPhrase: '',
+                  companyBs: '',
+                );
+                context.read<HomeBloc>().add(HomeAddUserEvent(user));
+                // We will pop the dialog in the listener on success
+                // But since safe popping inside listener for dialogs can be tricky if context is unstable,
+                // we can also pop here if we don't wait for success.
+                // However, waiting for success to pop is better UX for errors.
+                // For simplicity in this demo, I'll rely on the listener to pop on success.
+                // NOTE: The listener calls Navigator.pop which pops the DIALOG. 
+                // But wait, the listener is attached to the SCAFFOLD body. 
+                // If I pop from listener, it will work.
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditUserDialog(BuildContext context, UserEntity user) {
+    final nameController = TextEditingController(text: user.name);
+    final emailController = TextEditingController(text: user.email);
+    final phoneController = TextEditingController(text: user.phone);
+    final companyController = TextEditingController(text: user.companyName);
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Edit User'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                ),
+                TextField(
+                  controller: phoneController,
+                  decoration: const InputDecoration(labelText: 'Phone'),
+                ),
+                TextField(
+                  controller: companyController,
+                  decoration: const InputDecoration(labelText: 'Company'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final updatedUser = UserEntity(
+                  userId: user.userId, // Keep same ID
+                  name: nameController.text,
+                  username: user.username,
+                  email: emailController.text,
+                  phone: phoneController.text,
+                  website: user.website,
+                  street: user.street,
+                  suite: user.suite,
+                  city: user.city,
+                  zipcode: user.zipcode,
+                  lat: user.lat,
+                  lng: user.lng,
+                  companyName: companyController.text,
+                  companyCatchPhrase: user.companyCatchPhrase,
+                  companyBs: user.companyBs,
+                );
+                context.read<HomeBloc>().add(HomeUpdateUserEvent(updatedUser));
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

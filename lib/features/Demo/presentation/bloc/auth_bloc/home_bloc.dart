@@ -12,6 +12,8 @@ class HomeBloc extends Bloc<FetchdetailEvent, FetchdetailState> {
     on<HomedetailFetchEvent>(_onHomeDetailFetch);
     on<HomeDbFetchEvent>(_onHomeDbFetch);
     on<HomeDeleteUserEvent>(_onDeleteUser);
+    on<HomeAddUserEvent>(_onAddUser);
+    on<HomeUpdateUserEvent>(_onUpdateUser);
   }
 
   Future<void> _onHomeDetailFetch(
@@ -46,7 +48,7 @@ class HomeBloc extends Bloc<FetchdetailEvent, FetchdetailState> {
     );
   }
 
-  Future<void> _onDeleteUser(
+  void _onDeleteUser(
     HomeDeleteUserEvent event,
     Emitter<FetchdetailState> emit,
   ) async {
@@ -61,4 +63,37 @@ class HomeBloc extends Bloc<FetchdetailEvent, FetchdetailState> {
       ),
     );
   }
+
+  void _onAddUser(
+    HomeAddUserEvent event,
+    Emitter<FetchdetailState> emit,
+  ) async {
+    emit(HomeAddUserLoading());
+
+    final result = await repository.addUserToDb(event.user);
+
+    result.when(
+      (success) => emit(HomeAddUserSuccess('User added successfully')),
+      (failure) => emit(
+        HomeAddUserFailure(failure.message ?? 'Failed to add user'),
+      ),
+    );
+  }
+
+  void _onUpdateUser(
+    HomeUpdateUserEvent event,
+    Emitter<FetchdetailState> emit,
+  ) async {
+    emit(HomeUpdateUserLoading());
+
+    final result = await repository.updateUserInDb(event.user);
+
+    result.when(
+      (success) => emit(HomeUpdateUserSuccess('User updated successfully')),
+      (failure) => emit(
+        HomeUpdateUserFailure(failure.message ?? 'Failed to update user'),
+      ),
+    );
+  }
 }
+

@@ -4,7 +4,7 @@ import 'package:flutter_application_1/features/Demo/data/services/database_helpe
 import 'package:flutter_application_1/features/Demo/domain/repositories/homerepo.dart';
 import 'package:flutter_application_1/features/Demo/presentation/bloc/auth_bloc/home_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 final getIt = GetIt.instance;
 

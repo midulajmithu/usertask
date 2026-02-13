@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/features/Demo/presentation/bloc/auth_bloc/home_bloc.dart';
-import 'package:flutter_application_1/features/Demo/presentation/pages/home.dart';
+ 
 import 'package:flutter_application_1/injection/dependency_injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_application_1/features/Demo/presentation/pages/splash_screen.dart';
 
 void main() {
   setupDependencies();
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
           // tested with just a hot reload.
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: HomeScreen(),
+        home: const SplashScreen(),
       ),
     );
   }
